@@ -13,8 +13,8 @@ function debug(d) {
     console.log('DEBUG:', d);
 }
 
-function showStatus(info) {
-    $('#showInfo').html(info + '<br/>' + $('#showInfo').html());
+function showStatus(id,info) {
+    $('#showInfo_'+id).html(info + '<br/>' + $('#showInfo_'+id).html());
 }
 
 function getMembers() {
@@ -145,7 +145,7 @@ function createTaskClick() {
             },
             success: function(res) {
                 debug(res);
-                showStatus('建立成功：' + res.data.name);
+                showStatus(1,'建立成功：' + res.data.name);
             }
         });
 
@@ -184,7 +184,7 @@ function createProjectClick() {
             },
             success: function(res) {
                 debug(res);
-                showStatus('建立成功：' + res.data.name);
+                showStatus(1,'建立成功：' + res.data.name);
                 init();
             }
         });
@@ -233,7 +233,7 @@ function taskReassignMember(tid,uid){
             },
             success: function(res) {
                 debug(res);
-                showStatus('更新成功：' + res.data.name);
+                showStatus(2,'更新成功：' + res.data.name);
             }
         });
 }
