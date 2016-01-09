@@ -6,6 +6,8 @@
  */
 var userToken = ''; //Login in Asana.com > My Profile Settings > Apps
 var workspace = ''; //Your workspace.
+var hsMembers = null;
+var hsProjects = null;
 
 function debug(d) {
     console.log('DEBUG:', d);
@@ -29,6 +31,7 @@ function getMembers() {
         },
         success: function(res) {
             debug(res.data);
+            hsMembers = res.data;
             var members = res.data;
             var str = '<option value="null">請選擇指派成員</option>';
             for (var i = 0; i < members.length; ++i) {
@@ -54,6 +57,7 @@ function getAsanaProject() {
         },
         success: function(res) {
             debug(res.data);
+            hsProjects = res.data;
             var projs = res.data;
             var str = '<option value="null">請選擇專案</option>';
             for (var i = 0; i < projs.length; ++i) {
@@ -118,7 +122,7 @@ function createTaskClick() {
         debug(project, due_on, member, status, name, note);
         $.ajax({
             method: 'POST',
-            url: "https://app.asana.com/api/1.0/tasks",
+            url: 'https://app.asana.com/api/1.0/tasks',
             crossDomain: true,
             headers: {
                 'Authorization': 'Bearer ' + userToken
@@ -192,10 +196,95 @@ function clearLogClick() {
     $('#showInfo').html('');
 }
 
+function buildMemberSelect(members, classname, selected) {
+    var s = '<select id="' + classname + '_' + selected + '" class="' + classname + ' selected form-control">';
+    for (var i = 0; i < members.length; ++i) {
+        if (members[i].id == selected) {
+            s += '<option selected="selected" value="' + members[i].id + '">' + members[i].name + '</option>';
+        } else {
+            s += '<option value="' + members[i].id + '">' + members[i].name + '</option>';
+        }
+    }
+    return s += '</select>';
+}
+
+function getProjectName(proj, id) {
+    var ans = '';
+    for (var i = 0; i < proj.length; ++i) {
+        if (proj[i].id == id) {
+            return ans = proj[i].name;
+        } else {
+            ans = 'Project Not Found.';
+        }
+    }
+    return ans;
+}
+
+function taskReassignMember(tid,uid){
+	$.ajax({
+            method: 'PUT',
+            url: 'https://app.asana.com/api/1.0/tasks/'+tid,
+            crossDomain: true,
+            headers: {
+                'Authorization': 'Bearer ' + userToken
+            },
+            data: {
+            	assignee:uid
+            },
+            success: function(res) {
+                debug(res);
+                showStatus('更新成功：' + res.data.name);
+            }
+        });
+}
+
+function memberTasksSelect() {
+    $('#memberTasks').change(function() {
+        debug($('#memberTasks').val());
+        $('#taskList').html('');
+        $.ajax({
+            method: 'GET',
+            url: 'https://app.asana.com/api/1.0/tasks?opt_fields=completed,name,due_on,due_at,assignee,notes,projects&workspace=10885786790172&assignee=' + $('#memberTasks').val(),
+            crossDomain: true,
+            headers: {
+                'Authorization': 'Bearer ' + userToken
+            },
+            data: {},
+            success: function(res) {
+                debug(res);
+                var head = '<table class="table table-striped"><thead><tr><th>編號</th><th>完成</th><th>專案</th><th>任務</th><th>細節</th><th>指派</th><th>死線</th></tr></thead><tbody>';
+                var body = '';
+                var foot = '</tbody></table>';
+                var tr = '<tr>',
+                    td = '<td>',
+                    tre = '</tr>',
+                    tde = '</td>';
+                var data = res.data;
+                for (var i = 0; i < data.length; ++i) {
+                    body += tr +
+                        td + (i + 1) + tde +
+                        td + (data[i].completed == true ? 'Ｏ' : 'Ｘ') + tde +
+                        td + (data[i].projects.length == 0 ? 'NO' : getProjectName(hsProjects, data[i].projects[0].id)) + tde +
+                        td + data[i].name + tde +
+                        td + data[i].notes + tde +
+                        td + (buildMemberSelect(hsMembers, 'hs_' + data[i].id, data[i].assignee.id)) + tde +
+                        td + data[i].due_on + tde +
+                        tre;
+                }
+                $('#taskList').html(head + body + foot);
+                $('.selected').change(function() {
+                    taskReassignMember($(this).attr('id').split('_')[1], $('#' + $(this).attr('id')).val());
+                })
+            }
+        });
+    });
+}
+
 function eventBinding() {
     clearLogClick();
     createTaskClick();
     createProjectClick();
+    memberTasksSelect();
 }
 
 function getAuth(cb) {
