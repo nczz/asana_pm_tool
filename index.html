@@ -13,110 +13,125 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous" />
     <!-- Latest compiled and minified JavaScript -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+
+    <style type="text/css" media="screen">
+        .page_wrap{
+            margin-top: 20px;
+        }
+        .title{
+            font-size:24px;
+        }
+    </style>
 </head>
 
 <body>
-    <div class="row">
-        <div id="menuBlock" class="form-group col-md-3">
-            <p>
-                <label>功能選單</label>
-            </p>
-            <p>
-                <button id="clearShowInfo" class="btn btn-default form-control">清除紀錄</button>
-            </p>
-            <div id="showInfo"></div>
+    <div class="page_wrap">
+        <div class="container">
+            <div class="row">
+                <div id="menuBlock" class="form-group col-md-4">
+                    <p>
+                        <label class="title">功能選單</label>
+
+                    </p>
+                    <p>
+                        <button id="clearShowInfo" class="btn btn-default form-control">清除紀錄</button>
+                    </p>
+                    <div id="showInfo"></div>
+                </div>
+                <div id="createTaskBlock" class="form-group col-md-4">
+                    <p>
+                        <label class="title" for="teskBlockName">建立任務：</label>
+                        <br/>
+                    </p>
+                    <p>
+                        <label for="projects">專案：</label>
+                        <br/>
+                        <select id="projects" class="projects form-control">
+                        </select>
+                    </p>
+                    <p>
+                        <label for="due_on">預定到期日：</label>
+                        <br/>
+                        <input id="due_on" type="date" class="form-control" />
+                    </p>
+                    <p>
+                        <label for="members">指派成員：</label>
+                        <br/>
+                        <select id="members" class="members form-control">
+                        </select>
+                    </p>
+                    <p>
+                        <label for="status">專案狀態：</label>
+                        <br/>
+                        <select id="status" class="status form-control">
+                        </select>
+                    </p>
+                    <p>
+                        <label for="name">專案狀態中做事的簡短描述：</label>
+                        <br/>
+                        <input id="name" type="text" class="form-control" />
+                    </p>
+                    <label for="note">專案狀態中做事的詳盡描述：</label>
+                    <br/>
+                    <p>
+                        <textarea id="note" class="form-control" rows="3"></textarea>
+                    </p>
+                    <p>
+                        <button id="createTask" class="btn btn-default form-control">建立任務</button>
+                    </p>
+                </div>
+                <div id="createProjectBlock" class="form-group col-md-4">
+                    <p>
+                        <label class="title" for="projBlockName">建立專案：</label>
+                        <br/>
+                    </p>
+                    <p>
+                        <label for="projectChtName">專案中文名稱：</label>
+                        <br/>
+                        <input id="projectChtName" type="text" class="form-control" />
+                    </p>
+                    <p>
+                        <label for="projectEngName">專案英文名稱：</label>
+                        <br/>
+                        <input id="projectEngName" type="text" class="form-control" />
+                    </p>
+                    <p>
+                        <label for="due_date">預定到期日：</label>
+                        <br/>
+                        <input id="due_date" type="date" class="form-control" />
+                    </p>
+                    <p>
+                        <label for="owner">指派成員：</label>
+                        <br/>
+                        <select id="owner" class="owner members form-control">
+                        </select>
+                    </p>
+                    <p>
+                        <label for="teams">團隊：</label>
+                        <br/>
+                        <select id="teams" class="teams form-control">
+                        </select>
+                    </p>
+                    <label for="projectLD">專案詳盡描述：</label>
+                    <br/>
+                    <p>
+                        <textarea id="projectLD" class="form-control" rows="3"></textarea>
+                    </p>
+                    <p>
+                        <button id="createProject" class="btn btn-default form-control">建立專案</button>
+                    </p>
+                </div>
+            </div>
         </div>
-
-            <div id="createTaskBlock" class="form-group col-md-3">
-                <p>
-                    <label for="teskBlockName">建立任務：</label>
-                    <br/>
-                </p>
-                <p>
-                    <label for="projects">專案：</label>
-                    <br/>
-                    <select id="projects" class="projects form-control">
-                    </select>
-                </p>
-                <p>
-                    <label for="due_on">預定到期日：</label>
-                    <br/>
-                    <input id="due_on" type="date" class="form-control" />
-                </p>
-                <p>
-                    <label for="members">指派成員：</label>
-                    <br/>
-                    <select id="members" class="members form-control">
-                    </select>
-                </p>
-                <p>
-                    <label for="status">專案狀態：</label>
-                    <br/>
-                    <select id="status" class="status form-control">
-                    </select>
-                </p>
-                <p>
-                    <label for="name">專案狀態中做事的簡短描述：</label>
-                    <br/>
-                    <input id="name" type="text" class="form-control" />
-                </p>
-                <label for="note">專案狀態中做事的詳盡描述：</label>
-                <br/>
-                <p>
-                    <textarea id="note" class="form-control" rows="3"></textarea>
-                </p>
-                <p>
-                    <button id="createTask" class="btn btn-default form-control">建立任務</button>
-                </p>
-            </div>
-            <div id="createProjectBlock" class="form-group col-md-3">
-                <p>
-                    <label for="projBlockName">建立專案：</label>
-                    <br/>
-                </p>
-                <p>
-                    <label for="projectChtName">專案中文名稱：</label>
-                    <br/>
-                    <input id="projectChtName" type="text" class="form-control" />
-                </p>
-                <p>
-                    <label for="projectEngName">專案英文名稱：</label>
-                    <br/>
-                    <input id="projectEngName" type="text" class="form-control" />
-                </p>
-                <p>
-                    <label for="due_date">預定到期日：</label>
-                    <br/>
-                    <input id="due_date" type="date" class="form-control" />
-                </p>
-                <p>
-                    <label for="owner">指派成員：</label>
-                    <br/>
-                    <select id="owner" class="owner members form-control">
-                    </select>
-                </p>
-                <p>
-                    <label for="teams">團隊：</label>
-                    <br/>
-                    <select id="teams" class="teams form-control">
-                    </select>
-                </p>
-                <label for="projectLD">專案詳盡描述：</label>
-                <br/>
-                <p>
-                    <textarea id="projectLD" class="form-control" rows="3"></textarea>
-                </p>
-                <p>
-                    <button id="createProject" class="btn btn-default form-control">建立專案</button>
-                </p>
-            </div>
-
-        <div class="row">
-            <div id="" class="form-group col-md-4">
-                <div id=""></div>
-            </div>
-            <div id="" class="form-group col-md-8">
-                <div id=""></div>
+        <!-- container -->
+        <div class="container">
+            <div class="row">
+                <div id="" class="form-group col-md-4">
+                    <div id=""></div>
+                </div>
+                <div id="" class="form-group col-md-8">
+                    <div id=""></div>
+                </div>
             </div>
         </div>
     </div>
