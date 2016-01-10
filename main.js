@@ -2,7 +2,7 @@
  * 
  * @authors Mxp (im@mxp.tw)
  * @date    2016-01-05 11:15:36
- * @version V0.9
+ * @version V1.0
  */
 var userToken = ''; //Login in Asana.com > My Profile Settings > Apps
 var workspace = ''; //Your workspace.
@@ -13,8 +13,8 @@ function debug(d) {
     console.log('DEBUG:', d);
 }
 
-function showStatus(id,info) {
-    $('#showInfo_'+id).html(info + '<br/>' + $('#showInfo_'+id).html());
+function showStatus(id, info) {
+    $('#showInfo_' + id).html(info + '<br/>' + $('#showInfo_' + id).html());
 }
 
 function getMembers() {
@@ -36,7 +36,8 @@ function getMembers() {
             var str = '<option value="null">請選擇指派成員</option>';
             for (var i = 0; i < members.length; ++i) {
                 debug(members[i].id, members[i].name);
-                str += '<option value="' + members[i].id + '">' + members[i].name + '</option>';
+                if (members[i].name != 'Private User')
+                    str += '<option value="' + members[i].id + '">' + members[i].name + '</option>';
             }
             $('.members').html(str);
         }
@@ -145,7 +146,7 @@ function createTaskClick() {
             },
             success: function(res) {
                 debug(res);
-                showStatus(1,'建立成功：' + res.data.name);
+                showStatus(1, '建立成功：' + res.data.name);
             }
         });
 
@@ -184,7 +185,7 @@ function createProjectClick() {
             },
             success: function(res) {
                 debug(res);
-                showStatus(1,'建立成功：' + res.data.name);
+                showStatus(1, '建立成功：' + res.data.name);
                 init();
             }
         });
@@ -202,7 +203,8 @@ function buildMemberSelect(members, classname, selected) {
         if (members[i].id == selected) {
             s += '<option selected="selected" value="' + members[i].id + '">' + members[i].name + '</option>';
         } else {
-            s += '<option value="' + members[i].id + '">' + members[i].name + '</option>';
+            if (members[i].name != 'Private User')
+                s += '<option value="' + members[i].id + '">' + members[i].name + '</option>';
         }
     }
     return s += '</select>';
@@ -220,22 +222,22 @@ function getProjectName(proj, id) {
     return ans;
 }
 
-function taskReassignMember(tid,uid){
-	$.ajax({
-            method: 'PUT',
-            url: 'https://app.asana.com/api/1.0/tasks/'+tid,
-            crossDomain: true,
-            headers: {
-                'Authorization': 'Bearer ' + userToken
-            },
-            data: {
-            	assignee:uid
-            },
-            success: function(res) {
-                debug(res);
-                showStatus(2,'更新成功：' + res.data.name);
-            }
-        });
+function taskReassignMember(tid, uid) {
+    $.ajax({
+        method: 'PUT',
+        url: 'https://app.asana.com/api/1.0/tasks/' + tid,
+        crossDomain: true,
+        headers: {
+            'Authorization': 'Bearer ' + userToken
+        },
+        data: {
+            assignee: uid
+        },
+        success: function(res) {
+            debug(res);
+            showStatus(2, '更新成功：' + res.data.name);
+        }
+    });
 }
 
 function memberTasksSelect() {
