@@ -222,7 +222,12 @@ function getProjectName(proj, id) {
     return ans;
 }
 
-function taskReassignMember(tid, uid) {
+function taskReassign(tid, uid, date) {
+    var data = {};
+    if (uid != '')
+        data['assignee'] = uid;
+    if (date != '')
+        data['due_on'] = date;
     $.ajax({
         method: 'PUT',
         url: 'https://app.asana.com/api/1.0/tasks/' + tid,
@@ -230,9 +235,7 @@ function taskReassignMember(tid, uid) {
         headers: {
             'Authorization': 'Bearer ' + userToken
         },
-        data: {
-            assignee: uid
-        },
+        data: data,
         success: function(res) {
             debug(res);
             showStatus(2, '更新成功：' + res.data.name);
@@ -270,13 +273,16 @@ function memberTasksSelect() {
                         td + data[i].name + tde +
                         td + data[i].notes + tde +
                         td + (buildMemberSelect(hsMembers, 'hs_' + data[i].id, data[i].assignee.id)) + tde +
-                        td + data[i].due_on + tde +
+                        td + '<input id="due_on_'+data[i].id+'" type="date" class="select-date form-control" value="'+(data[i].due_on==null?'':data[i].due_on) + '"/>'+tde +
                         tre;
                 }
                 $('#taskList').html(head + body + foot);
                 $('.selected').change(function() {
-                    taskReassignMember($(this).attr('id').split('_')[1], $('#' + $(this).attr('id')).val());
-                })
+                    taskReassign($(this).attr('id').split('_')[1], $('#' + $(this).attr('id')).val());
+                });
+                $('.select-date').change(function(){
+                	taskReassign($(this).attr('id').split('_')[2], '',$('#' + $(this).attr('id')).val());
+                });
             }
         });
     });
