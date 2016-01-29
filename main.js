@@ -13,11 +13,32 @@ function debug(d) {
     console.log('DEBUG:', d);
 }
 
+function waitme(status){
+	if(!status){
+		console.log(1);
+		$('body').waitMe({ 
+			effect : 'facebook', 
+			text : '請稍候哦哦哦哦哦哦哦～', 
+			bg : 'rgba(255,255,255,0.7)', 
+			color : '#000', 
+			sizeW : '', 
+			sizeH : '', 
+			source : '' 
+		});
+	} else {
+				console.log(2);
+		$('body').waitMe('hide');
+	}
+}
+
+
 function showStatus(id, info) {
     $('#showInfo_' + id).html(info + '<br/>' + $('#showInfo_' + id).html());
+    waitme('off');
 }
 
 function getMembers() {
+	waitme();
     $('.members').html('');
     $.ajax({
         method: 'GET',
@@ -40,11 +61,13 @@ function getMembers() {
                     str += '<option value="' + members[i].id + '">' + members[i].name + '</option>';
             }
             $('.members').html(str);
+            waitme('off');
         }
     });
 }
 
 function getAsanaProject() {
+	waitme();
     $('.projects').html('');
     $.ajax({
         method: 'GET',
@@ -66,6 +89,7 @@ function getAsanaProject() {
                 str += '<option value="' + projs[i].id + '">' + projs[i].name + '</option>';
             }
             $('.projects').html(str);
+            waitme('off');
         }
     });
 }
@@ -82,6 +106,7 @@ function getCaseStatus() {
 
 function getTeams() {
     $('.teams').html('');
+    waitme();
     $.ajax({
         method: 'GET',
         url: 'https://app.asana.com/api/1.0/organizations/' + workspace + '/teams',
@@ -101,6 +126,7 @@ function getTeams() {
                 str += '<option value="' + teams[i].id + '">' + teams[i].name + '</option>';
             }
             $('.teams').html(str);
+            waitme('off');
         }
     });
 }
@@ -114,6 +140,7 @@ function init() {
 
 function createTaskClick() {
     $('#createTask').click(function() {
+    	waitme();
         var project = $('#projects').val();
         var due_on = $('#due_on').val();
         var member = $('#members').val();
@@ -155,6 +182,7 @@ function createTaskClick() {
 
 function createProjectClick() {
     $('#createProject').click(function() {
+    	waitme();
         var projectChtName = $('#projectChtName').val();
         var projectEngName = $('#projectEngName').val();
         var due_date = $('#due_date').val();
@@ -245,6 +273,7 @@ function taskReassign(tid, uid, date) {
 
 function memberTasksSelect() {
     $('#memberTasks').change(function() {
+    	waitme();
         debug($('#memberTasks').val());
         $('#taskList').html('');
         $.ajax({
@@ -283,6 +312,7 @@ function memberTasksSelect() {
                 $('.select-date').change(function(){
                 	taskReassign($(this).attr('id').split('_')[2], '',$('#' + $(this).attr('id')).val());
                 });
+                waitme('off');
             }
         });
     });
@@ -312,6 +342,7 @@ function getAuth(cb) {
 }
 
 function main() {
+	waitme();
     init();
     eventBinding();
 }
