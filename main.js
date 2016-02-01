@@ -13,22 +13,22 @@ function debug(d) {
     console.log('DEBUG:', d);
 }
 
-function waitme(status){
-	if(!status){
-		console.log(1);
-		$('body').waitMe({ 
-			effect : 'facebook', 
-			text : '請稍候哦哦哦哦哦哦哦～', 
-			bg : 'rgba(255,255,255,0.7)', 
-			color : '#000', 
-			sizeW : '', 
-			sizeH : '', 
-			source : '' 
-		});
-	} else {
-				console.log(2);
-		$('body').waitMe('hide');
-	}
+function waitme(status) {
+    if (!status) {
+        console.log(1);
+        $('body').waitMe({
+            effect: 'facebook',
+            text: '請稍候哦哦哦哦哦哦哦～',
+            bg: 'rgba(255,255,255,0.7)',
+            color: '#000',
+            sizeW: '',
+            sizeH: '',
+            source: ''
+        });
+    } else {
+        console.log(2);
+        $('body').waitMe('hide');
+    }
 }
 
 
@@ -38,7 +38,7 @@ function showStatus(id, info) {
 }
 
 function getMembers() {
-	waitme();
+    waitme();
     $('.members').html('');
     $.ajax({
         method: 'GET',
@@ -67,7 +67,7 @@ function getMembers() {
 }
 
 function getAsanaProject() {
-	waitme();
+    waitme();
     $('.projects').html('');
     $.ajax({
         method: 'GET',
@@ -140,7 +140,7 @@ function init() {
 
 function createTaskClick() {
     $('#createTask').click(function() {
-    	waitme();
+        waitme();
         var project = $('#projects').val();
         var due_on = $('#due_on').val();
         var member = $('#members').val();
@@ -182,7 +182,7 @@ function createTaskClick() {
 
 function createProjectClick() {
     $('#createProject').click(function() {
-    	waitme();
+        waitme();
         var projectChtName = $('#projectChtName').val();
         var projectEngName = $('#projectEngName').val();
         var due_date = $('#due_date').val();
@@ -227,6 +227,7 @@ function clearLogClick() {
 
 function buildMemberSelect(members, classname, selected) {
     var s = '<select id="' + classname + '_' + selected + '" class="' + classname + ' selected form-control">';
+    s += '<option value="null">移除指派</option>';
     for (var i = 0; i < members.length; ++i) {
         if (members[i].id == selected) {
             s += '<option selected="selected" value="' + members[i].id + '">' + members[i].name + '</option>';
@@ -250,12 +251,18 @@ function getProjectName(proj, id) {
     return ans;
 }
 
-function taskReassign(tid, uid, date) {
+function taskReassign(tid, uid, date, completed) {
+    waitme();
     var data = {};
     if (uid != '')
         data['assignee'] = uid;
     if (date != '')
         data['due_on'] = date;
+    if (completed) {
+        data['completed'] = true;
+    } else {
+        data['completed'] = false;
+    }
     $.ajax({
         method: 'PUT',
         url: 'https://app.asana.com/api/1.0/tasks/' + tid,
@@ -273,7 +280,9 @@ function taskReassign(tid, uid, date) {
 
 function memberTasksSelect() {
     $('#memberTasks').change(function() {
-    	waitme();
+        if ($('#memberTasks').val() == 'null')
+            return;
+        waitme();
         debug($('#memberTasks').val());
         $('#taskList').html('');
         $.ajax({
@@ -297,20 +306,28 @@ function memberTasksSelect() {
                 for (var i = 0; i < data.length; ++i) {
                     body += tr +
                         td + (i + 1) + tde +
-                        td + (data[i].completed == true ? 'Ｏ' : 'Ｘ') + tde +
+                        td + (data[i].completed == true ? '<input id="completed_t_' + data[i].id + '" class="completed" type="checkbox" name="completed" value="false" checked="checked"/>' : '<input id="completed_f_' + data[i].id + '" class="completed" type="checkbox" name="completed" value="true"/>') + tde +
                         td + (data[i].projects.length == 0 ? 'NO' : getProjectName(hsProjects, data[i].projects[0].id)) + tde +
                         td + data[i].name + tde +
                         td + data[i].notes + tde +
                         td + (buildMemberSelect(hsMembers, 'hs_' + data[i].id, data[i].assignee.id)) + tde +
-                        td + '<input id="due_on_'+data[i].id+'" type="date" class="select-date form-control" value="'+(data[i].due_on==null?'':data[i].due_on) + '"/>'+tde +
+                        td + '<input id="due_on_' + data[i].id + '" type="date" class="select-date form-control" value="' + (data[i].due_on == null ? '' : data[i].due_on) + '"/>' + tde +
                         tre;
                 }
                 $('#taskList').html(head + body + foot);
                 $('.selected').change(function() {
-                    taskReassign($(this).attr('id').split('_')[1], $('#' + $(this).attr('id')).val());
+                    var tid = $(this).attr('id').split('_')[1];
+                    taskReassign(tid, $('#' + $(this).attr('id')).val());
+                    $('#completed_f_' + tid + ',#completed_t_' + tid).attr('checked', false);
                 });
-                $('.select-date').change(function(){
-                	taskReassign($(this).attr('id').split('_')[2], '',$('#' + $(this).attr('id')).val());
+                $('.select-date').change(function() {
+                    var tid = $(this).attr('id').split('_')[2];
+                    taskReassign(tid, '', $('#' + $(this).attr('id')).val());
+                    $('#completed_f_' + tid + ',#completed_t_' + tid).attr('checked', false);
+                });
+                $('.completed').click(function() {
+                    taskReassign($(this).attr('id').split('_')[2], '', '', $(this).val() == 'true' ? true : false);
+                    $(this).val() == 'true' ? $(this).val('false') : $(this).val('true');
                 });
                 waitme('off');
             }
@@ -342,7 +359,7 @@ function getAuth(cb) {
 }
 
 function main() {
-	waitme();
+    waitme();
     init();
     eventBinding();
 }
