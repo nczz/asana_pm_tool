@@ -252,7 +252,7 @@ function getProjectName(proj, id) {
 }
 
 function taskReassign(tid, uid, date, completed) {
-    waitme();
+    //waitme();
     var data = {};
     if (uid != '')
         data['assignee'] = uid;
